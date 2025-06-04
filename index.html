@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Berqurban Bersama UNP Peduli</title>
+<style>
+  /* Reset CSS */
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #121212;
+    color: #eee;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    background-color: #1f1f1f;
+    padding: 15px 30px;
+    border-bottom: 2px solid #4caf50;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    user-select: none;
+  }
+  header h1 {
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: #4caf50;
+  }
+  nav {
+    margin-top: 10px;
+    display: flex;
+    gap: 20px;
+    justify-content: flex-start;
+  }
+  nav button {
+    background: transparent;
+    border: 2px solid #4caf50;
+    color: #4caf50;
+    padding: 8px 18px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+  nav button:hover,
+  nav button.active {
+    background: #4caf50;
+    color: #121212;
+  }
+
+  main {
+    flex: 1;
+    padding: 30px;
+    max-width: 960px;
+    margin: 0 auto 50px auto;
+    width: 95%;
+  }
+
+  /* Form common styles */
+  form {
+    background-color: #1f1f1f;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow:
+      0 0 8px rgba(76, 175, 80, 0.4),
+      inset 0 0 8px rgba(76, 175, 80, 0.2);
+  }
+  form h2 {
+    margin-bottom: 20px;
+    color: #4caf50;
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  select {
+    width: 100%;
+    background-color: #222;
+    border: 2px solid #4caf50;
+    border-radius: 8px;
+    padding: 12px 15px;
+    color: #eee;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="number"]:focus,
+  select:focus {
+    outline: none;
+    border-color: #8bc34a;
+  }
+  input[type="submit"] {
+    background-color: #4caf50;
+    color: #121212;
+    border: none;
+    padding: 14px 25px;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow:
+      0 6px 12px rgba(76, 175, 80, 0.6);
+    transition: background-color 0.3s ease;
+    width: 100%;
+  }
+  input[type="submit"]:hover {
+    background-color: #66bb6a;
+  }
+  button.delete-btn {
+    background-color: #e53935;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: background-color 0.3s ease;
+  }
+  button.delete-btn:hover {
+    background-color: #ff6659;
+  }
+
+  /* Table styles */
+  .report {
+    background-color: #1f1f1f;
+    border-radius: 10px;
+    box-shadow:
+      0 0 12px rgba(76,175,80,0.5);
+    padding: 20px 30px;
+    overflow-x: auto;
+  }
+  .report h2 {
+    color: #4caf50;
+    margin-bottom: 20px;
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.95rem;
+    min-width: 650px;
+  }
+  th, td {
+    padding: 12px 15px;
+    border: 1px solid #333;
+    text-align: left;
+  }
+  th {
+    background-color: #4caf50;
+    color: #121212;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  tbody tr:hover {
+    background-color: #224422;
+  }
+  #totalReport {
+    margin-top: 15px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #a5d6a7;
+  }
+
+  /* Responsive navbar: burger menu */
+  @media (max-width: 650px) {
+    nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #121212;
+      border-top: 1px solid #4caf50;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.7);
+      z-index: 1000;
+    }
+    nav button {
+      flex: 1;
+      margin: 0 5px;
+      border: none;
+      font-size: 0.9rem;
+      border-radius: 0;
+      background-color: transparent;
+      color: #4caf50;
+    }
+    nav button.active, nav button:hover {
+      background-color: #4caf50;
+      color: #121212;
+      border-radius: 12px;
+    }
+    main {
+      padding-bottom: 70px;
+    }
+  }
+
+</style>
+</head>
+<body>
+<header>
+  <h1>Berqurban Bersama UNP Peduli</h1>
+  <nav aria-label="Primary">
+    <button id="nav-register" class="active" aria-controls="page-register" aria-selected="true" role="tab">Pendaftaran Peserta</button>
+    <button id="nav-deduction" aria-controls="page-deduction" aria-selected="false" role="tab">Input Potongan Gaji</button>
+    <button id="nav-report" aria-controls="page-report" aria-selected="false" role="tab">Laporan Peserta</button>
+  </nav>
+</header>
+<main>
+  <section id="page-register" role="tabpanel" aria-labelledby="nav-register">
+    <form id="registrationForm" novalidate>
+      <h2>Pendaftaran Peserta Qurban</h2>
+      <label for="name">Nama Lengkap</label>
+      <input type="text" id="name" placeholder="Nama Lengkap" required autocomplete="name" />
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="Email" required autocomplete="email" />
+      <label for="position">Jabatan</label>
+      <input type="text" id="position" placeholder="Jabatan" required />
+      <label for="monthlyDeduction">Potongan Gaji per Bulan (Rp)</label>
+      <input type="number" id="monthlyDeduction" placeholder="Potongan Gaji per Bulan (Rp)" required min="0" />
+      <input type="submit" value="Daftar" aria-label="Daftar Peserta Qurban" />
+    </form>
+  </section>
+
+  <section id="page-deduction" role="tabpanel" aria-labelledby="nav-deduction" hidden>
+    <form id="deductionForm" novalidate>
+      <h2>Input Potongan Gaji</h2>
+      <label for="deductionName">Nama Peserta</label>
+      <select id="deductionName" required>
+        <option value="" disabled selected>Pilih Nama Peserta</option>
+      </select>
+      <label for="totalMonths">Jumlah Bulan</label>
+      <input type="number" id="totalMonths" placeholder="Jumlah Bulan" required min="1" max="12" />
+      <input type="submit" value="Input Potongan" aria-label="Input Potongan Gaji" />
+    </form>
+  </section>
+
+  <section id="page-report" role="tabpanel" aria-labelledby="nav-report" hidden>
+    <div class="report" aria-live="polite">
+      <h2>Laporan Peserta Qurban</h2>
+      <table id="reportTable" role="table" aria-describedby="totalReport">
+        <thead>
+          <tr>
+            <th scope="col">Nama</th>
+            <th scope="col">Email</th>
+            <th scope="col">Jabatan</th>
+            <th scope="col">Potongan per Bulan (Rp)</th>
+            <th scope="col">Total Potongan (Rp)</th>
+            <th scope="col">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="reportBody">
+          <!-- Data dimunculkan di sini -->
+        </tbody>
+      </table>
+      <h3 id="totalReport" tabindex="0">Total Potongan Seluruhnya: Rp 0</h3>
+    </div>
+  </section>
+</main>
+
+<script>
+  const participants = [];
+  const totalPotonganMap = new Map();
+  let totalPotonganGlobal = 0;
+
+  const navRegister = document.getElementById('nav-register');
+  const navDeduction = document.getElementById('nav-deduction');
+  const navReport = document.getElementById('nav-report');
+
+  const pageRegister = document.getElementById('page-register');
+  const pageDeduction = document.getElementById('page-deduction');
+  const pageReport = document.getElementById('page-report');
+
+  const registrationForm = document.getElementById('registrationForm');
+  const deductionForm = document.getElementById('deductionForm');
+  const deductionNameSelect = document.getElementById('deductionName');
+
+  const reportBody = document.getElementById('reportBody');
+  const totalReport = document.getElementById('totalReport');
+
+  function setActivePage(pageId) {
+    [navRegister, navDeduction, navReport].forEach(btn => {
+      btn.classList.remove('active');
+      btn.setAttribute('aria-selected', 'false');
+    });
+    [pageRegister, pageDeduction, pageReport].forEach(section => {
+      section.hidden = true;
+      section.setAttribute('tabindex', '-1');
+    });
+
+    if (pageId === 'page-register') {
+      navRegister.classList.add('active');
+      navRegister.setAttribute('aria-selected', 'true');
+      pageRegister.hidden = false;
+      pageRegister.removeAttribute('tabindex');
+      pageRegister.focus();
+    } else if (pageId === 'page-deduction') {
+      navDeduction.classList.add('active');
+      navDeduction.setAttribute('aria-selected', 'true');
+      pageDeduction.hidden = false;
+      pageDeduction.removeAttribute('tabindex');
+      pageDeduction.focus();
+    } else if (pageId === 'page-report') {
+      navReport.classList.add('active');
+      navReport.setAttribute('aria-selected', 'true');
+      pageReport.hidden = false;
+      pageReport.removeAttribute('tabindex');
+      pageReport.focus();
+      updateReportTable();
+    }
+  }
+
+  navRegister.addEventListener('click', () => setActivePage('page-register'));
+  navDeduction.addEventListener('click', () => setActivePage('page-deduction'));
+  navReport.addEventListener('click', () => setActivePage('page-report'));
+
+  registrationForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = registrationForm.name.value.trim();
+    const email = registrationForm.email.value.trim();
+    const position = registrationForm.position.value.trim();
+    const monthlyDeduction = parseFloat(registrationForm.monthlyDeduction.value);
+
+    if (!name || !email || !position || isNaN(monthlyDeduction) || monthlyDeduction < 0) {
+      alert("Mohon isi semua data dengan benar.");
+      return;
+    }
+
+    // Cek nama peserta agar unik
+    const exist = participants.find(p => p.name.toLowerCase() === name.toLowerCase());
+    if (exist) {
+      alert("Peserta dengan nama ini sudah terdaftar.");
+      return;
+    }
+
+    participants.push({
+      name,
+      email,
+      position,
+      monthlyDeduction,
+    });
+
+    updateDeductionSelect();
+
+    alert("Peserta '" + name + "' berhasil didaftarkan!");
+    registrationForm.reset();
+  });
+
+  function updateDeductionSelect() {
+    deductionNameSelect.innerHTML = '<option value="" disabled selected>Pilih Nama Peserta</option>';
+    participants.forEach(p => {
+      const option = document.createElement("option");
+      option.value = p.name;
+      option.textContent = p.name;
+      deductionNameSelect.appendChild(option);
+    });
+  }
+
+  deductionForm.addEventListener("submit", e => {
+    e.preventDefault();
+
+    const deductionName = deductionNameSelect.value;
+    const totalMonths = parseInt(deductionForm.totalMonths.value);
+
+    if (!deductionName || isNaN(totalMonths) || totalMonths < 1 || totalMonths > 12) {
+      alert("Mohon isi data dengan benar (Jumlah bulan antara 1 sampai 12).");
+      return;
+    }
+
+    const participant = participants.find(p => p.name === deductionName);
+
+    if (!participant) {
+      alert("Peserta tidak ditemukan! Pastikan penulisan nama benar.");
+      return;
+    }
+
+    const potonganTotal = participant.monthlyDeduction * totalMonths;
+
+    if (totalPotonganMap.has(participant.name)) {
+      totalPotonganGlobal -= totalPotonganMap.get(participant.name);
+    }
+    totalPotonganMap.set(participant.name, potonganTotal);
+    totalPotonganGlobal += potonganTotal;
+
+    alert(
+      "Potongan Rp" +
+        potonganTotal.toLocaleString("id-ID") +
+        " untuk peserta '" +
+        participant.name +
+        "' berhasil diinput."
+    );
+
+    deductionForm.reset();
+    deductionNameSelect.selectedIndex = 0;
+  });
+
+  function deleteParticipant(name) {
+    const index = participants.findIndex(p => p.name === name);
+    if (index === -1) {
+      alert("Peserta tidak ditemukan di list untuk dihapus.");
+      return;
+    }
+    if (!confirm("Yakin ingin menghapus peserta \"" + name + "\" dari daftar?")) {
+      return;
+    }
+    participants.splice(index, 1);
+    if (totalPotonganMap.has(name)) {
+      totalPotonganGlobal -= totalPotonganMap.get(name);
+      totalPotonganMap.delete(name);
+    }
+    updateDeductionSelect();
+    updateReportTable();
+    alert("Peserta \"" + name + "\" berhasil dihapus.");
+  }
+
+  function updateReportTable() {
+    reportBody.innerHTML = "";
+    if (participants.length === 0) {
+      reportBody.innerHTML =
+        '<tr><td colspan="6" style="text-align:center;">Belum ada peserta yang terdaftar.</td></tr>';
+      totalReport.textContent = "Total Potongan Seluruhnya: Rp 0";
+      return;
+    }
+
+    participants.forEach(p => {
+      const totalPotongan = totalPotonganMap.get(p.name) ?? p.monthlyDeduction * 12;
+      const tr = document.createElement("tr");
+
+      const tdName = document.createElement("td");
+      tdName.textContent = p.name;
+      tr.appendChild(tdName);
+
+      const tdEmail = document.createElement("td");
+      tdEmail.textContent = p.email;
+      tr.appendChild(tdEmail);
+
+      const tdPos = document.createElement("td");
+      tdPos.textContent = p.position;
+      tr.appendChild(tdPos);
+
+      const tdMonthly = document.createElement("td");
+      tdMonthly.textContent = p.monthlyDeduction.toLocaleString("id-ID");
+      tr.appendChild(tdMonthly);
+
+      const tdTotal = document.createElement("td");
+      tdTotal.textContent = totalPotongan.toLocaleString("id-ID");
+      tr.appendChild(tdTotal);
+
+      const tdAction = document.createElement("td");
+      const btnDelete = document.createElement("button");
+      btnDelete.classList.add("delete-btn");
+      btnDelete.textContent = "Hapus";
+      btnDelete.setAttribute("aria-label", "Hapus peserta " + p.name);
+      btnDelete.addEventListener("click", () => deleteParticipant(p.name));
+      tdAction.appendChild(btnDelete);
+      tr.appendChild(tdAction);
+
+      reportBody.appendChild(tr);
+    });
+
+    totalReport.textContent =
+      "Total Potongan Seluruhnya: Rp " + totalPotonganGlobal.toLocaleString("id-ID");
+  }
+
+  setActivePage("page-register");
+</script>
+</body>
+</html>
+
