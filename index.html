@@ -130,9 +130,54 @@
     font-weight: 700;
     font-size: 0.85rem;
     transition: background-color 0.3s ease;
+    margin-left: 10px;
   }
   button.delete-btn:hover {
     background-color: #ff6659;
+  }
+  button.edit-btn {
+    background-color: #1976d2;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: background-color 0.3s ease;
+  }
+  button.edit-btn:hover {
+    background-color: #4791db;
+  }
+  button.save-btn {
+    background-color: #388e3c;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+  }
+  button.save-btn:hover {
+    background-color: #66bb6a;
+  }
+  button.cancel-btn {
+    background-color: #bdbdbd;
+    color: #121212;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+  }
+  button.cancel-btn:hover {
+    background-color: #e0e0e0;
   }
 
   /* Table styles */
@@ -160,6 +205,7 @@
     padding: 12px 15px;
     border: 1px solid #333;
     text-align: left;
+    vertical-align: middle;
   }
   th {
     background-color: #4caf50;
@@ -212,6 +258,15 @@
     }
   }
 
+  input.edit-input {
+    background-color: #222;
+    border: 2px solid #4caf50;
+    color: #eee;
+    font-size: 1rem;
+    border-radius: 6px;
+    padding: 4px 8px;
+    width: 90%;
+  }
 </style>
 </head>
 <body>
@@ -263,7 +318,7 @@
             <th scope="col">Jabatan</th>
             <th scope="col">Potongan per Bulan (Rp)</th>
             <th scope="col">Total Potongan (Rp)</th>
-            <th scope="col">Aksi</th>
+            <th scope="col" style="min-width: 140px;">Aksi</th>
           </tr>
         </thead>
         <tbody id="reportBody">
@@ -276,9 +331,35 @@
 </main>
 
 <script>
-  const participants = [];
-  const totalPotonganMap = new Map();
+  // LocalStorage keys
+  const STORAGE_KEYS = {
+    participants: "unp_qurban_participants",
+    deductions: "unp_qurban_deductions"
+  };
+
+  // Load data from localStorage
+  let participants = [];
+  let totalPotonganMap = new Map();
   let totalPotonganGlobal = 0;
+
+  function loadData() {
+    const pJson = localStorage.getItem(STORAGE_KEYS.participants);
+    const dJson = localStorage.getItem(STORAGE_KEYS.deductions);
+    participants = pJson ? JSON.parse(pJson) : [];
+    const deductions = dJson ? JSON.parse(dJson) : {};
+    totalPotonganMap = new Map(Object.entries(deductions));
+    totalPotonganGlobal = 0;
+    for (const val of totalPotonganMap.values()) {
+      totalPotonganGlobal += val;
+    }
+  }
+
+  function saveData() {
+    localStorage.setItem(STORAGE_KEYS.participants, JSON.stringify(participants));
+    // Convert Map to object for JSON stringify
+    const objDeductions = Object.fromEntries(totalPotonganMap);
+    localStorage.setItem(STORAGE_KEYS.deductions, JSON.stringify(objDeductions));
+  }
 
   const navRegister = document.getElementById('nav-register');
   const navDeduction = document.getElementById('nav-deduction');
@@ -331,6 +412,17 @@
   navDeduction.addEventListener('click', () => setActivePage('page-deduction'));
   navReport.addEventListener('click', () => setActivePage('page-report'));
 
+  // Update select options for deduction form
+  function updateDeductionSelect() {
+    deductionNameSelect.innerHTML = '<option value="" disabled selected>Pilih Nama Peserta</option>';
+    participants.forEach(p => {
+      const option = document.createElement("option");
+      option.value = p.name;
+      option.textContent = p.name;
+      deductionNameSelect.appendChild(option);
+    });
+  }
+
   registrationForm.addEventListener('submit', e => {
     e.preventDefault();
     const name = registrationForm.name.value.trim();
@@ -343,7 +435,6 @@
       return;
     }
 
-    // Cek nama peserta agar unik
     const exist = participants.find(p => p.name.toLowerCase() === name.toLowerCase());
     if (exist) {
       alert("Peserta dengan nama ini sudah terdaftar.");
@@ -357,21 +448,11 @@
       monthlyDeduction,
     });
 
+    saveData();
     updateDeductionSelect();
-
     alert("Peserta '" + name + "' berhasil didaftarkan!");
     registrationForm.reset();
   });
-
-  function updateDeductionSelect() {
-    deductionNameSelect.innerHTML = '<option value="" disabled selected>Pilih Nama Peserta</option>';
-    participants.forEach(p => {
-      const option = document.createElement("option");
-      option.value = p.name;
-      option.textContent = p.name;
-      deductionNameSelect.appendChild(option);
-    });
-  }
 
   deductionForm.addEventListener("submit", e => {
     e.preventDefault();
@@ -399,12 +480,14 @@
     totalPotonganMap.set(participant.name, potonganTotal);
     totalPotonganGlobal += potonganTotal;
 
+    saveData();
+
     alert(
       "Potongan Rp" +
-        potonganTotal.toLocaleString("id-ID") +
-        " untuk peserta '" +
-        participant.name +
-        "' berhasil diinput."
+      potonganTotal.toLocaleString("id-ID") +
+      " untuk peserta '" +
+      participant.name +
+      "' berhasil diinput."
     );
 
     deductionForm.reset();
@@ -425,9 +508,139 @@
       totalPotonganGlobal -= totalPotonganMap.get(name);
       totalPotonganMap.delete(name);
     }
+    saveData();
     updateDeductionSelect();
     updateReportTable();
     alert("Peserta \"" + name + "\" berhasil dihapus.");
+  }
+
+  // For editing participant data in place in the report table
+  function createEditableRow(tr, participant, totalPotongan) {
+    tr.innerHTML = "";
+    // Name input
+    const tdName = document.createElement("td");
+    const inputName = document.createElement("input");
+    inputName.type = "text";
+    inputName.className = "edit-input";
+    inputName.value = participant.name;
+    tdName.appendChild(inputName);
+    tr.appendChild(tdName);
+
+    // Email input
+    const tdEmail = document.createElement("td");
+    const inputEmail = document.createElement("input");
+    inputEmail.type = "email";
+    inputEmail.className = "edit-input";
+    inputEmail.value = participant.email;
+    tdEmail.appendChild(inputEmail);
+    tr.appendChild(tdEmail);
+
+    // Position input
+    const tdPosition = document.createElement("td");
+    const inputPosition = document.createElement("input");
+    inputPosition.type = "text";
+    inputPosition.className = "edit-input";
+    inputPosition.value = participant.position;
+    tdPosition.appendChild(inputPosition);
+    tr.appendChild(tdPosition);
+
+    // Monthly deduction input
+    const tdMonthly = document.createElement("td");
+    const inputMonthly = document.createElement("input");
+    inputMonthly.type = "number";
+    inputMonthly.className = "edit-input";
+    inputMonthly.min = 0;
+    inputMonthly.value = participant.monthlyDeduction;
+    tdMonthly.appendChild(inputMonthly);
+    tr.appendChild(tdMonthly);
+
+    // Total deduction display (read-only)
+    const tdTotal = document.createElement("td");
+    tdTotal.textContent = totalPotongan.toLocaleString("id-ID");
+    tr.appendChild(tdTotal);
+
+    // Actions: Save and Cancel buttons
+    const tdActions = document.createElement("td");
+
+    const btnSave = document.createElement("button");
+    btnSave.className = "save-btn";
+    btnSave.textContent = "Simpan";
+
+    const btnCancel = document.createElement("button");
+    btnCancel.className = "cancel-btn";
+    btnCancel.textContent = "Batal";
+
+    tdActions.appendChild(btnSave);
+    tdActions.appendChild(btnCancel);
+
+    tr.appendChild(tdActions);
+
+    // Save event
+    btnSave.addEventListener("click", () => {
+      const newName = inputName.value.trim();
+      const newEmail = inputEmail.value.trim();
+      const newPosition = inputPosition.value.trim();
+      const newMonthly = parseFloat(inputMonthly.value);
+
+      if (!newName || !newEmail || !newPosition || isNaN(newMonthly) || newMonthly < 0) {
+        alert("Mohon isi semua data dengan benar sebelum menyimpan.");
+        return;
+      }
+
+      // Check duplicate name if changed
+      if(newName.toLowerCase() !== participant.name.toLowerCase()) {
+        const duplicate = participants.find(p => p.name.toLowerCase() === newName.toLowerCase());
+        if(duplicate) {
+          alert("Nama peserta sudah ada, gunakan nama lain.");
+          return;
+        }
+      }
+
+      // Update participant data
+      participant.name = newName;
+      participant.email = newEmail;
+      participant.position = newPosition;
+
+      // If monthly deduction changed, update it also in the deductions map according to stored potongan total
+      if(participant.monthlyDeduction !== newMonthly) {
+        // Calculate old total months from stored total potongan if any
+        const oldTotalPotongan = totalPotonganMap.get(participant.name) ?? participant.monthlyDeduction * 12;
+        // Calculate approximate months
+        let monthsUsed = 0;
+        if(participant.monthlyDeduction > 0)
+          monthsUsed = Math.round(oldTotalPotongan / participant.monthlyDeduction);
+        else
+          monthsUsed = 12; // fallback
+
+        // Update monthly deduction and recalc total potongan
+        participant.monthlyDeduction = newMonthly;
+        const newTotalPotongan = newMonthly * monthsUsed;
+        // Update totalPotonganMap and global total accordingly
+        const oldPotongan = totalPotonganMap.get(participant.name) ?? 0;
+        totalPotonganGlobal -= oldPotongan;
+        totalPotonganMap.set(participant.name, newTotalPotongan);
+        totalPotonganGlobal += newTotalPotongan;
+      } else if(newName !== participant.name) {
+        // If name changed but monthlyDeduction same, also need to rename the key in totalPotonganMap
+        if(totalPotonganMap.has(participant.name)) {
+          const val = totalPotonganMap.get(participant.name);
+          totalPotonganMap.delete(participant.name);
+          totalPotonganMap.set(newName, val);
+        }
+      }
+
+      // Save updated lists
+      saveData();
+
+      updateDeductionSelect();
+      updateReportTable();
+      alert("Data peserta berhasil diperbarui.");
+    });
+
+    // Cancel event, restore original row
+    btnCancel.addEventListener("click", () => {
+      updateReportTable();
+    });
   }
 
   function updateReportTable() {
@@ -443,34 +656,59 @@
       const totalPotongan = totalPotonganMap.get(p.name) ?? p.monthlyDeduction * 12;
       const tr = document.createElement("tr");
 
+      // If the row currently is being edited (skip possibility - we always re-create rows on update)
+      // Show static view mode:
+      tr.innerHTML = "";
+
+      // Nama
       const tdName = document.createElement("td");
       tdName.textContent = p.name;
       tr.appendChild(tdName);
 
+      // Email
       const tdEmail = document.createElement("td");
       tdEmail.textContent = p.email;
       tr.appendChild(tdEmail);
 
+      // Jabatan
       const tdPos = document.createElement("td");
       tdPos.textContent = p.position;
       tr.appendChild(tdPos);
 
+      // Potongan per bulan
       const tdMonthly = document.createElement("td");
       tdMonthly.textContent = p.monthlyDeduction.toLocaleString("id-ID");
       tr.appendChild(tdMonthly);
 
+      // Total potongan
       const tdTotal = document.createElement("td");
       tdTotal.textContent = totalPotongan.toLocaleString("id-ID");
       tr.appendChild(tdTotal);
 
-      const tdAction = document.createElement("td");
+      // Aksi: Edit + Hapus button
+      const tdActions = document.createElement("td");
+
+      const btnEdit = document.createElement("button");
+      btnEdit.className = "edit-btn";
+      btnEdit.textContent = "Edit";
+      btnEdit.setAttribute("aria-label", "Edit peserta " + p.name);
+
       const btnDelete = document.createElement("button");
       btnDelete.classList.add("delete-btn");
       btnDelete.textContent = "Hapus";
       btnDelete.setAttribute("aria-label", "Hapus peserta " + p.name);
-      btnDelete.addEventListener("click", () => deleteParticipant(p.name));
-      tdAction.appendChild(btnDelete);
-      tr.appendChild(tdAction);
+
+      tdActions.appendChild(btnEdit);
+      tdActions.appendChild(btnDelete);
+      tr.appendChild(tdActions);
+
+      btnEdit.addEventListener("click", () => {
+        createEditableRow(tr, p, totalPotongan);
+      });
+
+      btnDelete.addEventListener("click", () => {
+        deleteParticipant(p.name);
+      });
 
       reportBody.appendChild(tr);
     });
@@ -479,8 +717,10 @@
       "Total Potongan Seluruhnya: Rp " + totalPotonganGlobal.toLocaleString("id-ID");
   }
 
+  // Load initial data on page load
+  loadData();
+  updateDeductionSelect();
   setActivePage("page-register");
 </script>
 </body>
 </html>
-
